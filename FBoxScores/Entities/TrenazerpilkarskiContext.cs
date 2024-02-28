@@ -25,8 +25,8 @@ public partial class TrenazerpilkarskiContext : DbContext
     public virtual DbSet<GameRecordPlayer> Scores { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    /*Local build*/    => optionsBuilder.UseMySQL("Server=localhost;Database=trenazerpilkarski;Uid=root;Pwd=pass;");
-    /*FBOX build*/   // => optionsBuilder.UseMySQL("Server=192.0.0.4;Database=trenazerpilkarski;Uid=msk;Pwd=1234;");
+    /*Local build*/  // => optionsBuilder.UseMySQL("Server=localhost;Database=trenazerpilkarski;Uid=root;Pwd=pass;");
+    /*FBOX build*/    => optionsBuilder.UseMySQL("Server=192.0.0.4;Database=trenazerpilkarski;Uid=msk;Pwd=1234;");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
