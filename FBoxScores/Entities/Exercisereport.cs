@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace FBOX.Entities;
+namespace FBox.Entities;
 
 public partial class Exercisereport
 {

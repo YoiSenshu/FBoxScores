@@ -5,29 +5,174 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:FBoxScores"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <StackPanel>
-        <TabControl>
-            <TabItem Header="Lista zawodników">
-                <DataGrid x:Name="DataGridZawodnicy"/>
-                <!--Lista zawodników-->
-            </TabItem>
-            <TabItem Header="Zawodnik">
-                <StackPanel>
-                    <TextBlock x:Name="PlayerNameText" IsHitTestVisible="False" FontSize="20" Margin="10" HorizontalAlignment="Center"/>
-                    <ComboBox Name="PlayerSelection" HorizontalAlignment="Center" Width="200" SelectionChanged="PlayerSelection_SelectionChanged"></ComboBox>
-                    <DataGrid Margin="10" 
-                       HorizontalAlignment="Center" 
-                              IsHitTestVisible="False"
-                       GridLinesVisibility="None"
-                       x:Name="ScoreData" CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True" HeadersVisibility="None"/>
+        Title="MainWindow" Height="700" Width="1000"
+        FontFamily="Poppins" WindowStartupLocation="CenterScreen">
 
-                </StackPanel>
-            </TabItem>
+    <Window.Resources>
+        <SolidColorBrush x:Key="PrimaryBlueColor" Color="#348EF6"/>
+        <SolidColorBrush x:Key="SecundaryBlueColor" Color="#EFF2FF"/>
+
+        <SolidColorBrush x:Key="PrimaryTextColor" Color="#FFFFFF"/>
+        <SolidColorBrush x:Key="SecundaryTextColor" Color="#BBC1D1"/>
+
+        <SolidColorBrush x:Key="PrimaryGrayColor" Color="#BBC1D1"/>
+
+        <Style x:Key="TabItemStyle" TargetType="TabItem">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="{DynamicResource SecundaryTextColor}"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="Margin" Value="0 0 5 0"/>
+            <Setter Property="Width" Value="100"/>
+            <Setter Property="Padding" Value="10 10"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="VerticalAlignment" Value="Top"/>
+            <Setter Property="HorizontalAlignment" Value="Left"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TabItem">
+                        <Grid SnapsToDevicePixels="True">
+                            <Border CornerRadius="5"
+                                    Background="{TemplateBinding Background}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    Margin="{TemplateBinding Margin}"/>
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"
+                                              SnapsToDevicePixels="True"
+                                              RecognizesAccessKey="True"
+                                              Margin="{TemplateBinding Padding}"
+                                              ContentSource="Header"
+                                              Focusable="False"/>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="{DynamicResource SecundaryBlueColor}"/>
+                                <Setter Property="Foreground" Value="{DynamicResource PrimaryGrayColor}"/>
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter Property="Background" Value="{DynamicResource PrimaryBlueColor}"/>
+                                <Setter Property="Foreground" Value="{DynamicResource PrimaryTextColor}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="TabControlStyle" TargetType="TabControl">
+            <Setter Property="Background" Value="{DynamicResource SecundaryBlueColor}"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="Padding" Value="5"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TabControl">
+                        <Grid SnapsToDevicePixels="True">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="50"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <TabPanel Grid.Row="0"
+                                      Background="Transparent"
+                                      IsItemsHost="True"
+                                      HorizontalAlignment="Center"/>
+                            <Border Grid.Row="1"
+                                    CornerRadius="5"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    Background="{TemplateBinding Background}">
+                                <ContentPresenter ContentSource="SelectedContent"
+                                                  SnapsToDevicePixels="True"
+                                                  Margin="{TemplateBinding Padding}"/>
+                            </Border>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
 
 
+    </Window.Resources>
+    
+    <Grid Background="{DynamicResource PrimaryBlueColor}">
+        <Border CornerRadius="10"
+                Background="{DynamicResource PrimaryTextColor}"
+                Padding="30"
+                VerticalAlignment="Center"
+                HorizontalAlignment="Center">
+            <TabControl Width="600" Height="450" Style="{DynamicResource TabControlStyle}">
+                <TabItem Header="Ostatnia Gra" Style="{DynamicResource TabItemStyle}">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
 
-        </TabControl>
+                        <Label 
+                            x:Name="lblGameTitle" 
+                            Content="Game Title" 
+                            FontSize="24" 
+                            HorizontalAlignment="Center" 
+                            Margin="0,20,0,20"/>
+                        
+                        <ListBox 
+                            x:Name="lbPlayerScores" 
+                            Grid.Row="1" 
+                            HorizontalAlignment="Center" 
+                            VerticalAlignment="Top" 
+                            Width="300" 
+                            Height="300"/>
 
-    </StackPanel>
+
+                    </Grid>
+                </TabItem>
+
+                <TabItem Header="Home?" Style="{DynamicResource TabItemStyle}">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <ListBox x:Name="lbAveragePercentage" HorizontalAlignment="Center" VerticalAlignment="Top" Width="300" Height="200" Margin="50"/>
+                    </Grid>
+                </TabItem>
+
+                <TabItem Header="Skuteczność" Style="{DynamicResource TabItemStyle}">
+                    <StackPanel>
+
+                        <Label 
+                            x:Name="Effectiveness_PlayerNameText" 
+                            Content="Wybierz zawodnika" 
+                            FontSize="24" 
+                            HorizontalAlignment="Center" 
+                            Margin="0,20,0,20"/>
+
+                        <ComboBox 
+                            x:Name="Effectiveness_PlayerSelection" 
+                            HorizontalAlignment="Center" 
+                            Width="200" 
+                            SelectionChanged="PlayerSelection_SelectionChanged">
+                        </ComboBox>
+
+                        <DataGrid 
+                            Margin="10" 
+                            HorizontalAlignment="Center" 
+                            IsHitTestVisible="False"
+                            GridLinesVisibility="None"
+                            x:Name="Effectiveness_ScoreDataGrid" 
+                            CanUserAddRows="False" 
+                            CanUserDeleteRows="False" 
+                            IsReadOnly="True" 
+                            HeadersVisibility="None"/>
+
+                    </StackPanel>
+                </TabItem>
+            </TabControl>
+        </Border>
+
+    </Grid>
+
 </Window>

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace FBOX.Entities;
+namespace FBox.Entities;
 
 public partial class Player
 {
@@ -18,8 +18,8 @@ public partial class Player
     public virtual ICollection<Playerteam> Playerteams { get; set; } = new List<Playerteam>();
     public virtual List<GameRecordPlayer> Scores { get; set; } = new List<GameRecordPlayer>();
 
-    public override string ToString()
+    public override string? ToString()
     {
-        return this.Name + " " + this.Surname;
+        return Name + " " + Surname;
     }
 }

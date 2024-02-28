@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FBOX.Entities
+namespace FBox.Entities
 {
     public class GameConfig
     {

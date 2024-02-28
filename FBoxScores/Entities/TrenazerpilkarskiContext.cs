@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using MySql.EntityFrameworkCore.Extensions;
 
-namespace FBOX.Entities;
+namespace FBox.Entities;
 
 public partial class TrenazerpilkarskiContext : DbContext
 {
@@ -202,15 +202,15 @@ public partial class TrenazerpilkarskiContext : DbContext
         });
         modelBuilder.Entity<GameRecord>(entity =>
         {
-            entity.HasOne(e => e.GameConfig).WithMany(g => g.GameRecords).HasForeignKey(d => d.GameConfigId).OnDelete(DeleteBehavior.NoAction);
+            entity.HasOne(e => e.GameConfig).WithMany(g => g.GameRecords).HasForeignKey(d => d.GameConfigId).OnDelete(DeleteBehavior.SetNull);
 
             entity.HasIndex(e => e.GameConfigId);
 
         });
         modelBuilder.Entity<GameRecordPlayer>(entity =>
         {
-            entity.HasOne(e=>e.GameRecord).WithMany(g=>g.Scores).HasForeignKey(d => d.GameRecordId).OnDelete(DeleteBehavior.NoAction);
-            entity.HasOne(e => e.Player).WithMany(p => p.Scores).HasForeignKey(e => e.PlayerId).OnDelete(DeleteBehavior.NoAction);
+            entity.HasOne(e=>e.GameRecord).WithMany(g=>g.Scores).HasForeignKey(d => d.GameRecordId).OnDelete(DeleteBehavior.SetNull);
+            entity.HasOne(e => e.Player).WithMany(p => p.Scores).HasForeignKey(e => e.PlayerId).OnDelete(DeleteBehavior.SetNull);
 
             entity.HasIndex(e => e.PlayerId);
             entity.HasIndex(e => e.GameRecordId);
