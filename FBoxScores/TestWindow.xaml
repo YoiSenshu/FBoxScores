@@ -1,0 +1,81 @@
+﻿<Window x:Class="FBoxScores.TestWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:FBoxScores"
+        mc:Ignorable="d"
+        xmlns:properties="FBoxScores.Properties"
+        Title="FootballBox - Tablica Wyników" Height="720" Width="1280">
+    <Grid>
+
+        <Grid.Background>
+            <ImageBrush ImageSource="/Images/background.jpeg"/>
+        </Grid.Background>
+
+        <StackPanel>
+            
+            <Image 
+                Width="200"
+                Margin="-5"
+                Source="/Images/logo.png"/>
+
+            <StackPanel 
+                Margin="30,0,30,0">
+
+                <Border
+                    Margin="30,0,30,-6"
+                    CornerRadius="10,10,0,0"
+                    BorderThickness="3"
+                    BorderBrush="Blue"
+                    Background="AliceBlue">
+
+                    <Label 
+                        x:Name="MainTitleLabel" 
+                        Content="Game Title" 
+                        FontSize="40" 
+                        HorizontalAlignment="Center" 
+                        Margin="0,4,0,4"/>
+                    
+                </Border>
+
+                <Border
+                    Margin="0"
+                    CornerRadius="10,10,10,10"
+                    BorderThickness="3"
+                    BorderBrush="Blue"
+                    Height="500"
+                    Background="AliceBlue">
+
+                    <StackPanel>
+
+                        <Label 
+                            x:Name="SubtitleLabel" 
+                            Content="Tablica Wyników" 
+                            FontSize="28" 
+                            Foreground="Gray"
+                            HorizontalAlignment="Center" 
+                            Margin="0,15,0,15"/>
+
+                        <DataGrid
+                            CanUserDeleteRows="False"
+                            CanUserAddRows="False"
+                            CanUserSortColumns="False"
+                            IsReadOnly="True"
+                            IsHitTestVisible="False"
+                            HorizontalAlignment="Center"
+                            HeadersVisibility="None"
+                            x:Name="ScoresDataGrid">
+
+                        </DataGrid>
+
+                    </StackPanel>
+
+                </Border>
+
+            </StackPanel>
+
+        </StackPanel>
+
+    </Grid>
+</Window>

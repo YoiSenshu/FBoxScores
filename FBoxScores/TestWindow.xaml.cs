@@ -1,6 +1,7 @@
 ﻿using FBox.Entities;
 using FBoxScores.Util;
 using Google.Protobuf;
+using Google.Protobuf.Collections;
 using Microsoft.EntityFrameworkCore;
 using MySql.Data.MySqlClient;
 using System;
@@ -39,21 +40,42 @@ namespace FBoxScores
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class TestWindow : Window
     {
         private TrenazerpilkarskiContext context;
         private DispatcherTimer timer = new DispatcherTimer();
 
-        public MainWindow()
+        public List<Miejsce> miejsca = new List<Miejsce>()
+        {
+            new Miejsce(1, "rfef", "fewe", 7),
+            new Miejsce(2, "ewfwef", "ewffew", 5),
+            new Miejsce(3, "wegrewgrew", "ewfewf", 4),
+            new Miejsce(4, "ergreg", "ewffew", 3),
+            new Miejsce(5, "ewfewf", "ewfwe", 1)
+        };
+
+        public TestWindow()
         {
             InitializeComponent();
             this.context = new TrenazerpilkarskiContext();
-            InitializeTimer();
+
+            var list = new List<Miejsce>()
+            {
+                new Miejsce(1, "rfef", "fewe", 7),
+                new Miejsce(2, "ewfwef", "ewffew", 5),
+                new Miejsce(3, "wegrewgrew", "ewfewf", 4),
+                new Miejsce(4, "ergreg", "ewffew", 3),
+                new Miejsce(5, "ewfewf", "ewfwe", 1)
+            };
+
+            ScoresDataGrid.ItemsSource = list;
+
+            /*InitializeTimer();
 
             // Skuteczność
             Effectiveness_ScoreDataGrid.ItemsSource = new List<EffectivenessData>();
-            Effectiveness_PlayerSelection.ItemsSource = context.Players.ToList();
-        }
+            Effectiveness_PlayerSelection.ItemsSource = context.Players.ToList();*/
+        }/*
 
         /// <summary>
         /// 
@@ -150,14 +172,14 @@ namespace FBoxScores
         /// Zakładka "Skuteczność"
         /// Wyświetla średnie wyniki procentowe gier podanego gracza.
         /// </summary>
-        private void showPlayerEffectiveness()
+        /*private void showPlayerEffectiveness()
         {
             if (Effectiveness_PlayerSelection.SelectedIndex < 0)
             {
                 return;
             }
 
-            Player player = (Player) Effectiveness_PlayerSelection.SelectedValue;
+            Player player = (Player)Effectiveness_PlayerSelection.SelectedValue;
 
             // Sprawdzenie czy wybrany gracz istnieje w bazie danych. Jeśli gracz nie istnieje, to lista rozwijana zostanie odświeżona. NIE TESTOWANO
             if (!context.Players.Any(p => p.Id == player.Id))
@@ -203,12 +225,12 @@ namespace FBoxScores
 
                 context.Entry(score.GameRecord).Reference(gr => gr.GameConfig).Load();
 
-                if(score.GameRecord.GameConfig == null)
+                if (score.GameRecord.GameConfig == null)
                 {
                     continue;
                 }
 
-                if(!sorted.ContainsKey(score.GameRecord.GameConfig))
+                if (!sorted.ContainsKey(score.GameRecord.GameConfig))
                 {
                     sorted.Add(score.GameRecord.GameConfig, new List<GameRecordPlayer>());
                 }
@@ -217,13 +239,13 @@ namespace FBoxScores
             }
 
             return sorted;
-        }
+        }*/
 
         /*
          * EVENTS
          */
 
-        private void PlayerSelection_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        /*private void PlayerSelection_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             showPlayerEffectiveness();
         }
@@ -232,6 +254,6 @@ namespace FBoxScores
         {
             timer.Stop();
             context.Dispose();
-        }
+        }*/
     }
 }
