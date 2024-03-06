@@ -9,6 +9,12 @@
         Title="FootballBox - Tablica Wyników" Height="720" Width="1280">
 
     <Window.Resources>
+        <SolidColorBrush x:Key="PrimaryBlueColor" Color="Blue"/>
+        <SolidColorBrush x:Key="PrimaryWhiteColor" Color="LightGray" Opacity="0.7"/>
+        <SolidColorBrush x:Key="TxtWhiteColor" Color="White"/>
+        <SolidColorBrush x:Key="BtnHoverColor" Color="DarkBlue"/>
+        <SolidColorBrush x:Key="BtnClickColor" Color="Black"/>
+
         <Style x:Key="TextBlockHiddenWhenEmtpy" TargetType="TextBlock">
             <Style.Triggers>
                 <Trigger Property="Text" Value="">
@@ -19,20 +25,106 @@
                 </Trigger>
             </Style.Triggers>
         </Style>
-    </Window.Resources>
-    
-    <Grid>
 
+        <Style x:Key="SubtitleLabel" TargetType="{x:Type Label}">
+            <Setter Property="FontSize" Value="28"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="Foreground" Value="{DynamicResource TxtWhiteColor}"/>
+            <Setter Property="Margin" Value="0,15,0,15"/>
+        </Style>
+        <Style x:Key="MainLabel" TargetType="{x:Type Label}">
+            <Setter Property="Foreground" Value="{DynamicResource TxtWhiteColor}"/>
+            <Setter Property="FontSize" Value="40"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="Margin" Value="0,4,0,4"/>
+        </Style>
+        <Style x:Key="TopBorder" TargetType="{x:Type Border}">
+            <Setter Property="Margin" Value="30,0,30,-6"/>
+            <Setter Property="CornerRadius" Value="10,10,0,0"/>
+            <Setter Property="BorderThickness" Value="7"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource PrimaryBlueColor}"/>
+            <Setter Property="Background" Value="{DynamicResource PrimaryWhiteColor}"/>
+        </Style>
+        <Style x:Key="PrimaryBorder" TargetType="{x:Type Border}">
+
+            <Setter Property="Margin" Value="30,0,30,0"/>
+            <Setter Property="CornerRadius" Value="10,10,10,10"/>
+            <Setter Property="BorderThickness" Value="7"/>
+            <Setter Property="Height" Value="500"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource PrimaryBlueColor}"/>
+            <Setter Property="Background" Value="{DynamicResource PrimaryWhiteColor}"/>
+        </Style>
+
+        <Style x:Key="BtnFBox" TargetType="{x:Type Button}">
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+        </Style>
+        <Style x:Key="MenuButtonStyle" TargetType="{x:Type Button}">
+            <Setter Property="Background" Value="{DynamicResource PrimaryBlueColor}"/>
+            <Setter Property="Foreground" Value="{DynamicResource TxtWhiteColor}"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Padding" Value="12 6 12 6"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="MaxHeight" Value="200"/>
+            <Setter Property="Width" Value="Auto"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="FontSize" Value="30"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border x:Name="btnBorder" CornerRadius="5"
+                                Background="{TemplateBinding Background}"
+                                Width="{TemplateBinding Width}"
+                                MaxHeight="{TemplateBinding MaxHeight}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                SnapsToDevicePixels="True"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter x:Name="ContentPresenter" Focusable="False"
+                                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                              Margin="{TemplateBinding Padding}"
+                                              SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                                              RecognizesAccessKey="True"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="btnBorder" Property="Background" Value="{DynamicResource BtnHoverColor}"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="btnBorder" Property="Background" Value="{DynamicResource BtnClickColor}"/>
+                            </Trigger>
+
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <Grid>
         <Grid.Background>
-            <ImageBrush ImageSource="/Images/background.jpeg" Opacity="0.8"/>
+            <ImageBrush ImageSource="/Images/background.jpeg"/>
         </Grid.Background>
 
-        <StackPanel>
-            
+        <Grid.RowDefinitions>
+            <RowDefinition Height="100"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+        </Grid.RowDefinitions>
+
+        <Button 
+            Click="MainMenuTogglerButton_Click"
+            Style="{DynamicResource BtnFBox}">
             <Image 
                 Width="200"
                 Margin="-5"
                 Source="/Images/logo.png"/>
+        </Button>
+
+        <!--Game 1-->
+        <Grid x:Name="LastGameGrid" Visibility="Visible" Grid.Row="1">
 
             <StackPanel 
                 Margin="30,0,30,0">
@@ -42,15 +134,16 @@
                     CornerRadius="10,10,0,0"
                     BorderThickness="3"
                     BorderBrush="Blue"
-                    Background="AliceBlue">
+                    Background="#d8e9ea">
 
                     <Label 
                         x:Name="MainTitleLabel" 
-                        Content="Game Title" 
+                        Content="Nazwa Gry" 
                         FontSize="40" 
+                        FontWeight="Bold"
                         HorizontalAlignment="Center" 
                         Margin="0,4,0,4"/>
-                    
+
                 </Border>
 
                 <Border
@@ -77,18 +170,18 @@
                             HorizontalContentAlignment="Stretch"
                             Background="Transparent"
                             BorderBrush="Transparent">
-                            
+
                             <ItemsControl.ItemTemplate>
-                                
+
                                 <DataTemplate>
-                                    
+
                                     <Border
                                         Padding="10"
                                         BorderThickness="0,0,1.5,1.5"
                                         Margin="80,12,80,0"
                                         Background="White"
                                         BorderBrush="#7f7f7f">
-                                        
+
                                         <Grid Margin="40,0,40,0">
 
                                             <Grid.ColumnDefinitions>
@@ -116,16 +209,16 @@
                                                 FontWeight="SemiBold"
                                                 Foreground="#1a1a1a"
                                                 Grid.Column="1">
-                                                
+
                                                 <TextBlock.Text>
                                                     <MultiBinding StringFormat="{}{0} {1}">
                                                         <Binding Path="Name" />
                                                         <Binding Path="Surname" />
                                                     </MultiBinding>
                                                 </TextBlock.Text>
-                                                
+
                                             </TextBlock>
-                                            
+
                                             <TextBlock 
                                                 Style="{DynamicResource TextBlockHiddenWhenEmtpy}"
                                                 VerticalAlignment="Center"
@@ -137,8 +230,7 @@
                                                 Padding="10,5,10,5"
                                                 Margin="20,0,0,0"
                                                 Text="{Binding ClubName}" 
-                                                Grid.Column="2"
-                                                />
+                                                Grid.Column="2"/>
 
                                             <StackPanel
                                                 Orientation="Horizontal"
@@ -170,9 +262,9 @@
 
                                         </Grid>
                                     </Border>
-                                    
+
                                 </DataTemplate>
-                                
+
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
 
@@ -182,7 +274,41 @@
 
             </StackPanel>
 
-        </StackPanel>
+
+        </Grid >
+
+        <!--Game 2-->
+        <Grid x:Name="GameRecordGrid" Visibility="Collapsed" Grid.Row="1">
+            <StackPanel>
+                
+            </StackPanel>
+        </Grid>
+
+        <!--Game 3-->
+        <Grid x:Name="PlayerScoreGrid" Visibility="Collapsed" Grid.Row="1">
+            <StackPanel>
+            </StackPanel>
+        </Grid>
+
+        <!--Menu-->
+        <Grid x:Name="MenuGrid" Visibility="Collapsed" Grid.Row="1">
+            <Border
+                Style="{DynamicResource PrimaryBorder}">
+                <Grid  Margin="30,0,30,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <Button Style="{DynamicResource MenuButtonStyle}"  HorizontalAlignment="Center" Content="Wyniki z ostatniej gry" Click="Button_Game1" />
+                    <Button Style="{DynamicResource MenuButtonStyle}"  HorizontalAlignment="Center" Content="Tabela ćwiczenia" Click="Button_Game2"  Grid.Column="1"/>
+                    <Button Style="{DynamicResource MenuButtonStyle}"  HorizontalAlignment="Center" Content="Wyniki zawodnika" Click="Button_Game3"  Grid.Column="2"/>
+                </Grid>
+
+            </Border>
+        </Grid>
+
 
     </Grid>
+    
 </Window>
