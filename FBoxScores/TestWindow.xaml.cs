@@ -45,30 +45,23 @@ namespace FBoxScores
         private TrenazerpilkarskiContext context;
         private DispatcherTimer timer = new DispatcherTimer();
 
-        public List<Miejsce> miejsca = new List<Miejsce>()
-        {
-            new Miejsce(1, "rfef", "fewe", 7),
-            new Miejsce(2, "ewfwef", "ewffew", 5),
-            new Miejsce(3, "wegrewgrew", "ewfewf", 4),
-            new Miejsce(4, "ergreg", "ewffew", 3),
-            new Miejsce(5, "ewfewf", "ewfwe", 1)
-        };
+        public List<Place> miejsca;
 
         public TestWindow()
         {
             InitializeComponent();
             this.context = new TrenazerpilkarskiContext();
 
-            var list = new List<Miejsce>()
+            miejsca = new List<Place>()
             {
-                new Miejsce(1, "rfef", "fewe", 7),
-                new Miejsce(2, "ewfwef", "ewffew", 5),
-                new Miejsce(3, "wegrewgrew", "ewfewf", 4),
-                new Miejsce(4, "ergreg", "ewffew", 3),
-                new Miejsce(5, "ewfewf", "ewfwe", 1)
+                new Place(1, "Jan", "Kowalski", "KSG", 7, 70),
+                new Place(2, "Andrzej", "Nowak", "FBI", 5, 50),
+                new Place(3, "Ewa", "Adamczyk", "CSI", 4, 40),
+                new Place(4, "Elżbieta", "Jakaśtam", "", 3, 30),
+                new Place(5, "Karol", "Kwiatkowski", null, 1, 10)
             };
 
-            ScoresDataGrid.ItemsSource = list;
+            Lista.ItemsSource = miejsca;
 
             /*InitializeTimer();
 

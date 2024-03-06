@@ -7,10 +7,24 @@
         mc:Ignorable="d"
         xmlns:properties="FBoxScores.Properties"
         Title="FootballBox - Tablica Wyników" Height="720" Width="1280">
+
+    <Window.Resources>
+        <Style x:Key="TextBlockHiddenWhenEmtpy" TargetType="TextBlock">
+            <Style.Triggers>
+                <Trigger Property="Text" Value="">
+                    <Setter Property="Visibility" Value="Collapsed" />
+                </Trigger>
+                <Trigger Property="Text" Value="{x:Null}">
+                    <Setter Property="Visibility" Value="Collapsed" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+    
     <Grid>
 
         <Grid.Background>
-            <ImageBrush ImageSource="/Images/background.jpeg"/>
+            <ImageBrush ImageSource="/Images/background.jpeg" Opacity="0.8"/>
         </Grid.Background>
 
         <StackPanel>
@@ -45,29 +59,122 @@
                     BorderThickness="3"
                     BorderBrush="Blue"
                     Height="500"
-                    Background="AliceBlue">
+                    Background="#d3e6e8">
 
                     <StackPanel>
 
                         <Label 
                             x:Name="SubtitleLabel" 
-                            Content="Tablica Wyników" 
+                            Content="TABLICA WYNIKÓW"
+                            FontWeight="SemiBold"
                             FontSize="28" 
-                            Foreground="Gray"
+                            Foreground="#5f5f5f"
                             HorizontalAlignment="Center" 
-                            Margin="0,15,0,15"/>
+                            Margin="0,15,0,5"/>
 
-                        <DataGrid
-                            CanUserDeleteRows="False"
-                            CanUserAddRows="False"
-                            CanUserSortColumns="False"
-                            IsReadOnly="True"
-                            IsHitTestVisible="False"
-                            HorizontalAlignment="Center"
-                            HeadersVisibility="None"
-                            x:Name="ScoresDataGrid">
+                        <ItemsControl 
+                            x:Name="Lista" 
+                            HorizontalContentAlignment="Stretch"
+                            Background="Transparent"
+                            BorderBrush="Transparent">
+                            
+                            <ItemsControl.ItemTemplate>
+                                
+                                <DataTemplate>
+                                    
+                                    <Border
+                                        Padding="10"
+                                        BorderThickness="0,0,1.5,1.5"
+                                        Margin="80,12,80,0"
+                                        Background="White"
+                                        BorderBrush="#7f7f7f">
+                                        
+                                        <Grid Margin="40,0,40,0">
 
-                        </DataGrid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="60" />
+                                                <ColumnDefinition Width="auto" />
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="300" />
+                                            </Grid.ColumnDefinitions>
+
+                                            <TextBlock 
+                                                VerticalAlignment="Center"
+                                                HorizontalAlignment="Left"
+                                                FontSize="36"
+                                                Margin="10,0,0,0"
+                                                FontWeight="UltraBold"
+                                                Foreground="#4f4f4f"
+                                                Text="{Binding PlaceNumber, StringFormat='\{0}'}" 
+                                                Grid.Column="0"
+                                                />
+
+                                            <TextBlock 
+                                                VerticalAlignment="Center"
+                                                HorizontalAlignment="Left"
+                                                FontSize="24"
+                                                FontWeight="SemiBold"
+                                                Foreground="#1a1a1a"
+                                                Grid.Column="1">
+                                                
+                                                <TextBlock.Text>
+                                                    <MultiBinding StringFormat="{}{0} {1}">
+                                                        <Binding Path="Name" />
+                                                        <Binding Path="Surname" />
+                                                    </MultiBinding>
+                                                </TextBlock.Text>
+                                                
+                                            </TextBlock>
+                                            
+                                            <TextBlock 
+                                                Style="{DynamicResource TextBlockHiddenWhenEmtpy}"
+                                                VerticalAlignment="Center"
+                                                HorizontalAlignment="Left"
+                                                FontSize="24"
+                                                FontWeight="SemiBold"
+                                                Foreground="White"
+                                                Background="#9f9f9f"
+                                                Padding="10,5,10,5"
+                                                Margin="20,0,0,0"
+                                                Text="{Binding ClubName}" 
+                                                Grid.Column="2"
+                                                />
+
+                                            <StackPanel
+                                                Orientation="Horizontal"
+                                                HorizontalAlignment="Right"
+                                                VerticalAlignment="Center"
+                                                Grid.Column="3">
+
+                                                <TextBlock
+                                                    x:Name="PointsAmountTextBlock"
+                                                    HorizontalAlignment="Right"
+                                                    VerticalAlignment="Center"
+                                                    FontSize="34"
+                                                    Margin="10,0,0,0"
+                                                    FontWeight="UltraBold"
+                                                    Foreground="#1f1f1f"
+                                                    Text="{Binding Points}"/>
+
+                                                <TextBlock
+                                                    x:Name="ScoreTypeTextBlock"
+                                                    HorizontalAlignment="Right"
+                                                    VerticalAlignment="Center"
+                                                    FontSize="24"
+                                                    Margin="10,0,30,0"
+                                                    FontWeight="Bold"
+                                                    Foreground="#4f4f4f"
+                                                    Text="PKT"/>
+
+                                            </StackPanel>
+
+                                        </Grid>
+                                    </Border>
+                                    
+                                </DataTemplate>
+                                
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
 
                     </StackPanel>
 
