@@ -7,9 +7,11 @@ namespace FBox.Entities;
 
 public partial class TrenazerpilkarskiContext : DbContext
 {
-    public TrenazerpilkarskiContext()
+    public TrenazerpilkarskiContext(string connectionString)
     {
+        _connectionString = connectionString;
     }
+    private readonly string _connectionString;
     public TrenazerpilkarskiContext(DbContextOptions<TrenazerpilkarskiContext> options): base(options) { }
     public virtual DbSet<Club> Clubs { get; set; }
     public virtual DbSet<Config> Configs { get; set; }
@@ -25,8 +27,7 @@ public partial class TrenazerpilkarskiContext : DbContext
     public virtual DbSet<GameRecordPlayer> Scores { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    /*Local build*/   => optionsBuilder.UseMySQL("Server=localhost;Database=trenazerpilkarski;Uid=root;Pwd=pass;");
-    /*FBOX build*/   // => optionsBuilder.UseMySQL("Server=192.0.0.4;Database=trenazerpilkarski;Uid=msk;Pwd=1234;");
+    => optionsBuilder.UseMySQL(_connectionString);
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

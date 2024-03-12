@@ -9,11 +9,13 @@
         Title="FootballBox - Tablica Wyników" Height="720" Width="1280">
 
     <Window.Resources>
-        <SolidColorBrush x:Key="PrimaryBlueColor" Color="Blue"/>
-        <SolidColorBrush x:Key="PrimaryWhiteColor" Color="LightGray" Opacity="0.7"/>
-        <SolidColorBrush x:Key="TxtWhiteColor" Color="White"/>
-        <SolidColorBrush x:Key="BtnHoverColor" Color="DarkBlue"/>
-        <SolidColorBrush x:Key="BtnClickColor" Color="Black"/>
+
+        <SolidColorBrush x:Key="BorderColor" Color="Blue"/>
+        <SolidColorBrush x:Key="PanelBackgroundColor" Color="#ccffffff"/>
+        <SolidColorBrush x:Key="MenuButtonsColor" Color="Blue"/>
+        <SolidColorBrush x:Key="MenuButtonsTextColor" Color="White"/>
+        <SolidColorBrush x:Key="MenuClickedButtonsColor" Color="Black"/>
+        <SolidColorBrush x:Key="MenuHoverButtonsColor" Color="LightBlue"/>
 
         <Style x:Key="TextBlockHiddenWhenEmtpy" TargetType="TextBlock">
             <Style.Triggers>
@@ -26,44 +28,16 @@
             </Style.Triggers>
         </Style>
 
-        <Style x:Key="SubtitleLabel" TargetType="{x:Type Label}">
-            <Setter Property="FontSize" Value="28"/>
-            <Setter Property="HorizontalAlignment" Value="Center"/>
-            <Setter Property="Foreground" Value="{DynamicResource TxtWhiteColor}"/>
-            <Setter Property="Margin" Value="0,15,0,15"/>
-        </Style>
-        <Style x:Key="MainLabel" TargetType="{x:Type Label}">
-            <Setter Property="Foreground" Value="{DynamicResource TxtWhiteColor}"/>
-            <Setter Property="FontSize" Value="40"/>
-            <Setter Property="HorizontalAlignment" Value="Center"/>
-            <Setter Property="Margin" Value="0,4,0,4"/>
-        </Style>
-        <Style x:Key="TopBorder" TargetType="{x:Type Border}">
-            <Setter Property="Margin" Value="30,0,30,-6"/>
-            <Setter Property="CornerRadius" Value="10,10,0,0"/>
-            <Setter Property="BorderThickness" Value="7"/>
-            <Setter Property="BorderBrush" Value="{DynamicResource PrimaryBlueColor}"/>
-            <Setter Property="Background" Value="{DynamicResource PrimaryWhiteColor}"/>
-        </Style>
-        <Style x:Key="PrimaryBorder" TargetType="{x:Type Border}">
-
-            <Setter Property="Margin" Value="30,0,30,0"/>
-            <Setter Property="CornerRadius" Value="10,10,10,10"/>
-            <Setter Property="BorderThickness" Value="7"/>
-            <Setter Property="Height" Value="500"/>
-            <Setter Property="BorderBrush" Value="{DynamicResource PrimaryBlueColor}"/>
-            <Setter Property="Background" Value="{DynamicResource PrimaryWhiteColor}"/>
-        </Style>
-
-        <Style x:Key="BtnFBox" TargetType="{x:Type Button}">
+        <Style x:Key="MenuTogglerButtonStyle" TargetType="{x:Type Button}">
             <Setter Property="HorizontalAlignment" Value="Center"/>
             <Setter Property="VerticalAlignment" Value="Center"/>
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="BorderThickness" Value="0"/>
         </Style>
+        
         <Style x:Key="MenuButtonStyle" TargetType="{x:Type Button}">
-            <Setter Property="Background" Value="{DynamicResource PrimaryBlueColor}"/>
-            <Setter Property="Foreground" Value="{DynamicResource TxtWhiteColor}"/>
+            <Setter Property="Background" Value="{DynamicResource MenuButtonsColor}"/>
+            <Setter Property="Foreground" Value="{DynamicResource MenuButtonsTextColor}"/>
             <Setter Property="FontWeight" Value="Bold"/>
             <Setter Property="Padding" Value="12 6 12 6"/>
             <Setter Property="BorderThickness" Value="0"/>
@@ -91,10 +65,10 @@
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="btnBorder" Property="Background" Value="{DynamicResource BtnHoverColor}"/>
+                                <Setter TargetName="btnBorder" Property="Background" Value="{DynamicResource MenuHoverButtonsColor}"/>
                             </Trigger>
                             <Trigger Property="IsPressed" Value="True">
-                                <Setter TargetName="btnBorder" Property="Background" Value="{DynamicResource BtnClickColor}"/>
+                                <Setter TargetName="btnBorder" Property="Background" Value="{DynamicResource MenuClickedButtonsColor}"/>
                             </Trigger>
 
                         </ControlTemplate.Triggers>
@@ -102,11 +76,19 @@
                 </Setter.Value>
             </Setter>
         </Style>
+
+        <Style x:Key="ScoreboardBorderStyle" TargetType="Border">
+            <Setter Property="CornerRadius" Value="10,10,0,0"/>
+            <Setter Property="BorderThickness" Value="3"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderColor}"/>
+            <Setter Property="Background" Value="{DynamicResource PanelBackgroundColor}"/>
+        </Style>
+
     </Window.Resources>
 
     <Grid>
         <Grid.Background>
-            <ImageBrush ImageSource="/Images/background.jpeg"/>
+            <ImageBrush ImageSource="/Images/background.jpeg" Stretch="None"/>
         </Grid.Background>
 
         <Grid.RowDefinitions>
@@ -116,11 +98,12 @@
 
         <Button 
             Click="MainMenuTogglerButton_Click"
-            Style="{DynamicResource BtnFBox}">
+            Style="{DynamicResource MenuTogglerButtonStyle}">
             <Image 
+                x:Name="LogoImage"
+                Source="Images/logo.png"
                 Width="200"
-                Margin="-5"
-                Source="/Images/logo.png"/>
+                Margin="-5"/>
         </Button>
 
         <!--Game 1-->
@@ -130,16 +113,13 @@
                 Margin="30,0,30,0">
 
                 <Border
-                    Margin="30,0,30,-6"
-                    CornerRadius="10,10,0,0"
-                    BorderThickness="3"
-                    BorderBrush="Blue"
-                    Background="#d8e9ea">
+                    Style="{DynamicResource ScoreboardBorderStyle}"
+                    Margin="30,0,30,-6">
 
                     <Label 
-                        x:Name="MainTitleLabel" 
-                        Content="Nazwa Gry" 
-                        FontSize="40" 
+                        x:Name="MainTitleLabel"
+                        FontSize="40"
+                        Content="Ładowanie..."
                         FontWeight="Bold"
                         HorizontalAlignment="Center" 
                         Margin="0,4,0,4"/>
@@ -147,12 +127,8 @@
                 </Border>
 
                 <Border
-                    Margin="0"
-                    CornerRadius="10,10,10,10"
-                    BorderThickness="3"
-                    BorderBrush="Blue"
-                    Height="500"
-                    Background="#d3e6e8">
+                    Style="{DynamicResource ScoreboardBorderStyle}"
+                    Height="500">
 
                     <StackPanel>
 
@@ -280,7 +256,7 @@
         <!--Game 2-->
         <Grid x:Name="GameRecordGrid" Visibility="Collapsed" Grid.Row="1">
             <StackPanel>
-                
+
             </StackPanel>
         </Grid>
 
@@ -293,7 +269,8 @@
         <!--Menu-->
         <Grid x:Name="MenuGrid" Visibility="Collapsed" Grid.Row="1">
             <Border
-                Style="{DynamicResource PrimaryBorder}">
+                Margin="30,0,30,-6"
+                Style="{DynamicResource ScoreboardBorderStyle}">
                 <Grid  Margin="30,0,30,0">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition />
@@ -310,5 +287,5 @@
 
 
     </Grid>
-    
+
 </Window>

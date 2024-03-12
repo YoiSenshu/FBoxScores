@@ -1,28 +1,16 @@
 ﻿using FBox.Entities;
 using FBoxScores.Util;
-using Google.Protobuf;
-using Google.Protobuf.Collections;
-using Microsoft.EntityFrameworkCore;
-using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Diagnostics;
+using System.Configuration;
+using System.Drawing;
+using System.Drawing.Text;
+using System.IO;
 using System.Linq;
-using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using System.Windows.Threading;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace FBoxScores
 {
@@ -41,6 +29,7 @@ namespace FBoxScores
     /// </summary>
     public partial class TestWindow : Window
     {
+        private KeyValueConfigurationCollection settings;
         private TrenazerpilkarskiContext context;
         private DispatcherTimer timer = new DispatcherTimer();
 
@@ -49,7 +38,14 @@ namespace FBoxScores
         public TestWindow()
         {
             InitializeComponent();
-            this.context = new TrenazerpilkarskiContext();
+
+            settings = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None).AppSettings.Settings;
+            context = new TrenazerpilkarskiContext(settings["database_connection"].Value);
+            ApplyConfiguration();
+
+            timer.Interval = TimeSpan.FromSeconds(1);
+            timer.Tick += OnTimerTick;
+            timer.Start();
 
             miejsca = new List<Place>()
             {
@@ -61,6 +57,15 @@ namespace FBoxScores
             };
 
             Lista.ItemsSource = miejsca;
+        }
+
+        private void OnTimerTick(object? sender, EventArgs? e)
+        {
+            context = new TrenazerpilkarskiContext(settings["database_connection"].Value);
+
+            /*
+             * Odświerzanie danych
+             */
         }
 
         private void MainMenuTogglerButton_Click(object sender, RoutedEventArgs e)
@@ -90,6 +95,25 @@ namespace FBoxScores
         {
             MenuGrid.Visibility = Visibility.Collapsed;
             PlayerScoreGrid.Visibility = Visibility.Visible;
+        }
+
+        private void ApplyConfiguration()
+        {
+            LogoImage.Source = new BitmapImage(new Uri(settings["logo_image_source"].Value, UriKind.RelativeOrAbsolute));
+
+            /*
+             * TODO naprawić
+            Uri path = new Uri("Fonts/Ojuju-Regular.ttf", UriKind.Relative);
+
+            if(true)
+            {
+                System.Windows.Media.FontFamily font = new System.Windows.Media.FontFamily(path, "test");
+                this.FontFamily = font;
+
+            } else
+            {
+                MessageBox.Show("Nie udało się załadować czcionki z pliku. Czcionka została ustawiona na domyślną.", "Wystąpił problem!", MessageBoxButton.OK, MessageBoxImage.Error);
+            }*/
         }
     }
 }

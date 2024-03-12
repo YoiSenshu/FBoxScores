@@ -47,7 +47,7 @@ namespace FBoxScores
         public MainWindow()
         {
             InitializeComponent();
-            this.context = new TrenazerpilkarskiContext();
+            this.context = new TrenazerpilkarskiContext("efefe");
             InitializeTimer();
 
             // Skuteczność
@@ -70,7 +70,7 @@ namespace FBoxScores
         /// </summary>
         private void Timer_Tick(object? sender, EventArgs e)
         {
-            this.context = new TrenazerpilkarskiContext();
+            this.context = new TrenazerpilkarskiContext("wfwef");
 
             LoadGameData();
             CalculateAveragePercentage();
