@@ -8,13 +8,13 @@ using System.Threading.Tasks;
 namespace FBoxScores.Util
 {
 
-    public class EffectivenessData
+    public class PlayerEffectiveness
     {
         public string GameName { get; set; }
         public string AverageScorePercentage { get; set; }
      
 
-        public EffectivenessData(string gameConfigName, List<GameRecordPlayer> records)
+        public PlayerEffectiveness(string gameConfigName, List<GameRecordPlayer> records)
         {
             this.GameName = gameConfigName;
             float totalScorePercentageSum = 0;
@@ -26,5 +26,7 @@ namespace FBoxScores.Util
 
             this.AverageScorePercentage = Math.Round(totalScorePercentageSum / records.Count, 1) + "%";
         }
+
+
     }
 }

@@ -5,173 +5,512 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:FBoxScores"
         mc:Ignorable="d"
-        Title="MainWindow" Height="700" Width="1000"
-        FontFamily="Poppins" WindowStartupLocation="CenterScreen">
+        xmlns:properties="FBoxScores.Properties"
+        Title="FootballBox - Tablica Wyników" Height="720" Width="1280">
 
     <Window.Resources>
-        <SolidColorBrush x:Key="PrimaryBlueColor" Color="#348EF6"/>
-        <SolidColorBrush x:Key="SecundaryBlueColor" Color="#EFF2FF"/>
 
-        <SolidColorBrush x:Key="PrimaryTextColor" Color="#FFFFFF"/>
-        <SolidColorBrush x:Key="SecundaryTextColor" Color="#BBC1D1"/>
+        <SolidColorBrush x:Key="BorderColor" Color="#002c2f"/>
+        <SolidColorBrush x:Key="PanelBackgroundColor" Color="#b2a59f99"/>
+        <SolidColorBrush x:Key="MenuButtonsColor" Color="#1e646e"/>
+        <SolidColorBrush x:Key="MenuButtonsTextColor" Color="White"/>
+        <SolidColorBrush x:Key="MenuClickedButtonsColor" Color="#002c2f"/>
+        <SolidColorBrush x:Key="MenuHoverButtonsColor" Color="#1e846e"/>
 
-        <SolidColorBrush x:Key="PrimaryGrayColor" Color="#BBC1D1"/>
+        <Style x:Key="TextBlockHiddenWhenEmtpy" TargetType="TextBlock">
+            <Style.Triggers>
+                <Trigger Property="Text" Value="">
+                    <Setter Property="Visibility" Value="Collapsed" />
+                </Trigger>
+                <Trigger Property="Text" Value="{x:Null}">
+                    <Setter Property="Visibility" Value="Collapsed" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
 
-        <Style x:Key="TabItemStyle" TargetType="TabItem">
-            <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="Foreground" Value="{DynamicResource SecundaryTextColor}"/>
-            <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="BorderBrush" Value="Transparent"/>
-            <Setter Property="Margin" Value="0 0 5 0"/>
-            <Setter Property="Width" Value="100"/>
-            <Setter Property="Padding" Value="10 10"/>
+        <Style x:Key="LabelMain" TargetType="Label">
+            <Setter Property="FontSize" Value="40"/>
             <Setter Property="FontWeight" Value="Bold"/>
-            <Setter Property="VerticalAlignment" Value="Top"/>
-            <Setter Property="HorizontalAlignment" Value="Left"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="Margin" Value="0,4,0, 0"/>
+        </Style>
+
+        <Style x:Key="MenuTogglerButtonStyle" TargetType="{x:Type Button}">
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+        </Style>
+
+        <Style x:Key="MenuButtonStyle" TargetType="{x:Type Button}">
+            <Setter Property="Background" Value="{DynamicResource MenuButtonsColor}"/>
+            <Setter Property="Foreground" Value="{DynamicResource MenuButtonsTextColor}"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Padding" Value="12 6 12 6"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="MaxHeight" Value="200"/>
+            <Setter Property="Width" Value="Auto"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="FontSize" Value="30"/>
             <Setter Property="Template">
                 <Setter.Value>
-                    <ControlTemplate TargetType="TabItem">
-                        <Grid SnapsToDevicePixels="True">
-                            <Border CornerRadius="5"
-                                    Background="{TemplateBinding Background}"
-                                    BorderThickness="{TemplateBinding BorderThickness}"
-                                    BorderBrush="{TemplateBinding BorderBrush}"
-                                    Margin="{TemplateBinding Margin}"/>
-                            <ContentPresenter HorizontalAlignment="Center"
-                                              VerticalAlignment="Center"
-                                              SnapsToDevicePixels="True"
-                                              RecognizesAccessKey="True"
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border x:Name="btnBorder" CornerRadius="5"
+                                Background="{TemplateBinding Background}"
+                                Width="{TemplateBinding Width}"
+                                MaxHeight="{TemplateBinding MaxHeight}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                SnapsToDevicePixels="True"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter x:Name="ContentPresenter" Focusable="False"
+                                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                                               Margin="{TemplateBinding Padding}"
-                                              ContentSource="Header"
-                                              Focusable="False"/>
-                        </Grid>
+                                              SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                                              RecognizesAccessKey="True"/>
+                        </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="Background" Value="{DynamicResource SecundaryBlueColor}"/>
-                                <Setter Property="Foreground" Value="{DynamicResource PrimaryGrayColor}"/>
+                                <Setter TargetName="btnBorder" Property="Background" Value="{DynamicResource MenuHoverButtonsColor}"/>
                             </Trigger>
-                            <Trigger Property="IsSelected" Value="True">
-                                <Setter Property="Background" Value="{DynamicResource PrimaryBlueColor}"/>
-                                <Setter Property="Foreground" Value="{DynamicResource PrimaryTextColor}"/>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="btnBorder" Property="Background" Value="{DynamicResource MenuClickedButtonsColor}"/>
                             </Trigger>
+
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
         </Style>
 
-        <Style x:Key="TabControlStyle" TargetType="TabControl">
-            <Setter Property="Background" Value="{DynamicResource SecundaryBlueColor}"/>
-            <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="BorderBrush" Value="Transparent"/>
-            <Setter Property="Padding" Value="5"/>
-            <Setter Property="VerticalAlignment" Value="Center"/>
-            <Setter Property="HorizontalAlignment" Value="Center"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="TabControl">
-                        <Grid SnapsToDevicePixels="True">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="50"/>
-                                <RowDefinition Height="*"/>
-                            </Grid.RowDefinitions>
-                            <TabPanel Grid.Row="0"
-                                      Background="Transparent"
-                                      IsItemsHost="True"
-                                      HorizontalAlignment="Center"/>
-                            <Border Grid.Row="1"
-                                    CornerRadius="5"
-                                    BorderThickness="{TemplateBinding BorderThickness}"
-                                    BorderBrush="{TemplateBinding BorderBrush}"
-                                    Background="{TemplateBinding Background}">
-                                <ContentPresenter ContentSource="SelectedContent"
-                                                  SnapsToDevicePixels="True"
-                                                  Margin="{TemplateBinding Padding}"/>
-                            </Border>
-                        </Grid>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
+        <Style x:Key="ScoreboardBorderStyle" TargetType="Border">
+            <Setter Property="CornerRadius" Value="10,10,0,0"/>
+            <Setter Property="BorderThickness" Value="3"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderColor}"/>
+            <Setter Property="Background" Value="{DynamicResource PanelBackgroundColor}"/>
+
         </Style>
 
-
     </Window.Resources>
-    
-    <Grid Background="{DynamicResource PrimaryBlueColor}">
-        <Border CornerRadius="10"
-                Background="{DynamicResource PrimaryTextColor}"
-                Padding="30"
-                VerticalAlignment="Center"
-                HorizontalAlignment="Center">
-            <TabControl Width="600" Height="450" Style="{DynamicResource TabControlStyle}">
-                <TabItem Header="Ostatnia Gra" Style="{DynamicResource TabItemStyle}">
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="*"/>
-                        </Grid.RowDefinitions>
 
-                        <Label 
-                            x:Name="lblGameTitle" 
-                            Content="Game Title" 
-                            FontSize="24" 
-                            HorizontalAlignment="Center" 
-                            Margin="0,20,0,20"/>
-                        
-                        <ListBox 
-                            x:Name="lbPlayerScores" 
-                            Grid.Row="1" 
-                            HorizontalAlignment="Center" 
-                            VerticalAlignment="Top" 
-                            Width="300" 
-                            Height="300"/>
+    <Grid>
+        <Grid.Background>
+            <ImageBrush ImageSource="/Images/background.jpeg" Stretch="Fill"/>
+        </Grid.Background>
 
+        <Grid.RowDefinitions>
+            <RowDefinition Height="100"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+        </Grid.RowDefinitions>
 
-                    </Grid>
-                </TabItem>
+        <Button 
+            Click="MainMenuTogglerButton_Click"
+            Style="{DynamicResource MenuTogglerButtonStyle}">
+            <Image 
+                x:Name="LogoImage"
+                Source="Images/logo.png"
+                Width="200"
+                Margin="-5"/>
+        </Button>
 
-                <TabItem Header="Home?" Style="{DynamicResource TabItemStyle}">
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="*"/>
-                        </Grid.RowDefinitions>
-                        <ListBox x:Name="lbAveragePercentage" HorizontalAlignment="Center" VerticalAlignment="Top" Width="300" Height="200" Margin="50"/>
-                    </Grid>
-                </TabItem>
+        <!--Game 1-->
+        <Grid x:Name="LastGameGrid" Visibility="Collapsed" Grid.Row="1">
 
-                <TabItem Header="Skuteczność" Style="{DynamicResource TabItemStyle}">
+            <StackPanel 
+                Margin="30,0,30,0">
+
+                <Border
+                    Style="{DynamicResource ScoreboardBorderStyle}"
+                    Margin="30,0,30,-6">
+
+                    <Label 
+                        x:Name="LastGameName"
+                        Style="{DynamicResource LabelMain}"
+                        Content="Ładowanie Wyników..."
+                        />
+
+                </Border>
+
+                <Border
+                    x:Name="SectionOneBorder"
+                    Style="{DynamicResource ScoreboardBorderStyle}"
+                    Height="500">
+
                     <StackPanel>
 
                         <Label 
-                            x:Name="Effectiveness_PlayerNameText" 
-                            Content="Wybierz zawodnika" 
-                            FontSize="24" 
+                            x:Name="SubtitleLabel" 
+                            Content="TABLICA WYNIKÓW"
+                            FontWeight="SemiBold"
+                            FontSize="28" 
+                            Foreground="#5f5f5f"
                             HorizontalAlignment="Center" 
-                            Margin="0,20,0,20"/>
+                            Margin="0,15,0,5"/>
 
-                        <ComboBox 
-                            x:Name="Effectiveness_PlayerSelection" 
-                            HorizontalAlignment="Center" 
-                            Width="200" 
-                            SelectionChanged="PlayerSelection_SelectionChanged">
-                        </ComboBox>
+                        <ItemsControl
+                            x:Name="LastGameScoreboard" 
+                            HorizontalContentAlignment="Stretch"
+                            Background="Transparent"
+                            BorderBrush="Transparent">
 
-                        <DataGrid 
-                            Margin="10" 
-                            HorizontalAlignment="Center" 
-                            IsHitTestVisible="False"
-                            GridLinesVisibility="None"
-                            x:Name="Effectiveness_ScoreDataGrid" 
-                            CanUserAddRows="False" 
-                            CanUserDeleteRows="False" 
-                            IsReadOnly="True" 
-                            HeadersVisibility="None"/>
+                            <ItemsControl.ItemTemplate>
+
+                                <DataTemplate>
+
+                                    <Border
+                                        x:Name="element"
+                                        Padding="10"
+                                        BorderThickness="0,0,1.5,1.5"
+                                        Margin="80,12,80,0"
+                                        Background="White"
+                                        BorderBrush="#7f7f7f">
+
+                                        <Grid Margin="40,0,40,0">
+
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="60" />
+                                                <ColumnDefinition Width="auto" />
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="300" />
+                                            </Grid.ColumnDefinitions>
+
+                                            <TextBlock 
+                                                VerticalAlignment="Center"
+                                                HorizontalAlignment="Left"
+                                                FontSize="36"
+                                                Margin="10,0,0,0"
+                                                FontWeight="UltraBold"
+                                                Foreground="#4f4f4f"
+                                                Text="{Binding PlaceNumber, StringFormat='\{0}'}" 
+                                                Grid.Column="0"
+                                                />
+
+                                            <TextBlock 
+                                                VerticalAlignment="Center"
+                                                HorizontalAlignment="Left"
+                                                FontSize="24"
+                                                FontWeight="SemiBold"
+                                                Foreground="#1a1a1a"
+                                                Grid.Column="1">
+
+                                                <TextBlock.Text>
+                                                    <MultiBinding StringFormat="{}{0} {1}">
+                                                        <Binding Path="Name" />
+                                                        <Binding Path="Surname" />
+                                                    </MultiBinding>
+                                                </TextBlock.Text>
+
+                                            </TextBlock>
+
+                                            <TextBlock 
+                                                Style="{DynamicResource TextBlockHiddenWhenEmtpy}"
+                                                VerticalAlignment="Center"
+                                                HorizontalAlignment="Left"
+                                                FontSize="24"
+                                                FontWeight="SemiBold"
+                                                Foreground="White"
+                                                Background="#9f9f9f"
+                                                Padding="10,5,10,5"
+                                                Margin="20,0,0,0"
+                                                Text="{Binding ClubName}" 
+                                                Grid.Column="2"/>
+
+                                            <StackPanel
+                                                Orientation="Horizontal"
+                                                HorizontalAlignment="Right"
+                                                VerticalAlignment="Center"
+                                                Grid.Column="3">
+
+                                                <TextBlock
+                                                    x:Name="PointsAmountTextBlock"
+                                                    HorizontalAlignment="Right"
+                                                    VerticalAlignment="Center"
+                                                    FontSize="34"
+                                                    Margin="10,0,0,0"
+                                                    FontWeight="UltraBold"
+                                                    Foreground="#1f1f1f"
+                                                    Text="{Binding Points}"/>
+
+                                                <TextBlock
+                                                    x:Name="ScoreTypeTextBlock"
+                                                    HorizontalAlignment="Right"
+                                                    VerticalAlignment="Center"
+                                                    FontSize="24"
+                                                    Margin="10,0,30,0"
+                                                    FontWeight="Bold"
+                                                    Foreground="#4f4f4f"
+                                                    Text="PKT"/>
+
+                                            </StackPanel>
+
+                                        </Grid>
+                                    </Border>
+
+                                </DataTemplate>
+
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
 
                     </StackPanel>
-                </TabItem>
-            </TabControl>
-        </Border>
+
+                </Border>
+
+            </StackPanel>
+
+
+        </Grid >
+
+        <!--Game 2-->
+        <Grid x:Name="GameRecordGrid" Visibility="Collapsed" Grid.Row="1">
+            <StackPanel 
+                Margin="30,0,30,0">
+
+                <Border
+                     Style="{DynamicResource ScoreboardBorderStyle}"
+                     Margin="30,0,30,-6">
+
+                    <Label 
+                         
+                         Style="{DynamicResource LabelMain}"
+                         Content="Skuteczność"
+                     />
+
+                </Border>
+
+                <Border
+                    x:Name="SectionTwoBorder"
+                     Style="{DynamicResource ScoreboardBorderStyle}"
+                        Height="500">
+
+                    <StackPanel>
+
+                        <Label
+                            x:Name="EffectivenessPlayerNameLabel"
+                            FontWeight="SemiBold"
+                            Content="Wybierz zawodnika"
+                            FontSize="28" 
+                            Foreground="#5f5f5f"
+                            HorizontalAlignment="Center" 
+                            MouseDoubleClick="EffectivenessPlayerNameLabel_MouseDoubleClick"
+                            Margin="0,15,0,5"/>
+
+                        <ComboBox
+                            x:Name="EffectivenessPlayerComboBox"
+                            Visibility="Collapsed"
+                            Width="300"
+                            FontWeight="SemiBold"
+                            FontSize="28" 
+                            SelectionChanged="EffectivenessPlayerComboBox_SelectionChanged"
+                            Foreground="#5f5f5f"
+                            HorizontalAlignment="Center" 
+                            Margin="0,15,0,5"/>
+
+                        <ItemsControl 
+                            x:Name="EffectivenessScoreboard" 
+                            HorizontalContentAlignment="Stretch"
+                            Background="Transparent"
+                            BorderBrush="Transparent">
+
+                            <ItemsControl.ItemTemplate>
+
+                                <DataTemplate>
+
+                                    <Border
+                                        Padding="10"
+                                        BorderThickness="0,0,1.5,1.5"
+                                        Margin="80,12,80,0"
+                                        Background="White"
+                                        BorderBrush="#7f7f7f">
+
+                                        <Grid Margin="40,0,40,0">
+
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="200" />
+                                            </Grid.ColumnDefinitions>
+
+                                            <TextBlock 
+                                                VerticalAlignment="Center"
+                                                HorizontalAlignment="Left"
+                                                FontSize="36"
+                                                Margin="10,0,0,0"
+                                                FontWeight="Bold"
+                                                Foreground="#555555"
+                                                Text="{Binding GameName}" 
+                                                Grid.Column="0"
+                                                />
+
+                                            <TextBlock 
+                                                VerticalAlignment="Center"
+                                                HorizontalAlignment="Left"
+                                                FontSize="24"
+                                                FontWeight="SemiBold"
+                                                Foreground="Black"
+                                                Text="{Binding AverageScorePercentage}"
+                                                Grid.Column="1"/>
+
+                                        </Grid>
+                                    </Border>
+
+                                </DataTemplate>
+
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+
+                    </StackPanel>
+
+                </Border>
+
+            </StackPanel>
+        </Grid>
+
+        <!--Game 3-->
+        <Grid x:Name="PlayerScoreGrid" Visibility="Collapsed" Grid.Row="1">
+            <StackPanel 
+                 Margin="30,0,30,0">
+
+                <Border
+                    Style="{DynamicResource ScoreboardBorderStyle}"
+                    Margin="30,0,30,-6">
+
+                    <Label 
+                        x:Name="PlayerMainLabel"
+                        Style="{DynamicResource LabelMain}"
+                        Content="Ładowanie..."
+                        />
+
+                </Border>
+
+                <Border
+                    x:Name="SectionThreeBorder"
+                    Style="{DynamicResource ScoreboardBorderStyle}"
+                    Height="500">
+
+                    <StackPanel>
+
+                        <Label 
+                
+                        Content="TABLICA WYNIKÓW"
+                        FontWeight="SemiBold"
+                        FontSize="28" 
+                        Foreground="#5f5f5f"
+                        HorizontalAlignment="Center" 
+                        Margin="0,15,0,5"
+                            />
+
+                        <ItemsControl 
+                            x:Name="PlayerList" 
+                             HorizontalContentAlignment="Stretch"
+                             Background="Transparent"
+                              BorderBrush="Transparent">
+
+                            <ItemsControl.ItemTemplate>
+
+                                <DataTemplate>
+
+                                    <Border
+                            Padding="10"
+                            BorderThickness="0,0,1.5,1.5"
+                            Margin="80,12,80,0"
+                            Background="White"
+                            BorderBrush="#7f7f7f">
+
+                                        <Grid Margin="40,0,40,0">
+
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="60" />
+                                                <ColumnDefinition Width="auto" />
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="300" />
+                                            </Grid.ColumnDefinitions>
+
+                                            <TextBlock 
+                                    VerticalAlignment="Center"
+                                    HorizontalAlignment="Left"
+                                    FontSize="36"
+                                    Margin="10,0,0,0"
+                                    FontWeight="UltraBold"
+                                    Foreground="#4f4f4f"
+                                    Text="{Binding Id, StringFormat='\{0}'}" 
+                                    Grid.Column="0"
+                                    />
+
+                                            <TextBlock 
+                                    VerticalAlignment="Center"
+                                    HorizontalAlignment="Left"
+                                    FontSize="24"
+                                    FontWeight="SemiBold"
+                                    Foreground="#1a1a1a"
+                                    Grid.Column="1"
+                                    Text="{Binding Game, StringFormat='\{0}'}"/>
+
+
+
+                                            <StackPanel
+                                                Orientation="Horizontal"
+                                                HorizontalAlignment="Right"
+                                                VerticalAlignment="Center"
+                                                Grid.Column="3">
+
+                                                <TextBlock
+                                        x:Name="PointsAmountTextBlock"
+                                        HorizontalAlignment="Right"
+                                        VerticalAlignment="Center"
+                                        FontSize="34"
+                                        Margin="10,0,0,0"
+                                        FontWeight="UltraBold"
+                                        Foreground="#1f1f1f"
+                                        Text="{Binding Percent}"/>
+
+                                                <TextBlock
+                                        x:Name="ScoreTypeTextBlock"
+                                        HorizontalAlignment="Right"
+                                        VerticalAlignment="Center"
+                                        FontSize="24"
+                                        Margin="10,0,30,0"
+                                        FontWeight="Bold"
+                                        Foreground="#4f4f4f"
+                                        Text="%"/>
+
+                                            </StackPanel>
+
+                                        </Grid>
+                                    </Border>
+
+                                </DataTemplate>
+
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+
+                    </StackPanel>
+
+                </Border>
+
+            </StackPanel>
+
+
+        </Grid>
+
+        <!--Menu-->
+        <Grid x:Name="MenuGrid" Visibility="Visible" Grid.Row="1">
+            <Border
+                Margin="30,0,30,-6"
+                Style="{DynamicResource ScoreboardBorderStyle}">
+                <Grid  Margin="30,0,30,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <Button Style="{DynamicResource MenuButtonStyle}"  HorizontalAlignment="Center" Content="Wyniki z ostatniej gry" Click="Button_Game1" />
+                    <Button Style="{DynamicResource MenuButtonStyle}"  HorizontalAlignment="Center" Content="Tabela skuteczności" Click="Button_Game2"  Grid.Column="1"/>
+                    <Button Style="{DynamicResource MenuButtonStyle}"  HorizontalAlignment="Center" Content="Wyniki zawodnika" Click="Button_Game3"  Grid.Column="2"/>
+                </Grid>
+
+            </Border>
+        </Grid>
+
 
     </Grid>
 

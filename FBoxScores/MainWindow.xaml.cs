@@ -1,187 +1,121 @@
 ﻿using FBox.Entities;
 using FBoxScores.Util;
-using Google.Protobuf;
 using Microsoft.EntityFrameworkCore;
-using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Diagnostics;
+using System.Collections.ObjectModel;
+using System.Configuration;
 using System.Linq;
-using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using System.Windows.Threading;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace FBoxScores
 {
     /*
      * TODO:
-     * - Poprawić ogólny wygląd.
-     * - Powiększyć napisy w listach.
-     * - Dodać możliwość wyboru danych w 1 i 2 zakładce.
-     * - Usunąć możliwość klikania w elementy list w 1 i 2 zakładce.
-     * - Dodać tytuł zakładki nr 2.
-     * - Zmienić nazwy metod np. dodać przedrostki w zależności od zakładki.
+     * Dodać możliwość zmiany czcionki.
+     * Powiększyć 3 pierwsze wiersze w tabelach.
+     * Przenieść właściwości do styli.
+     * Uzupełnić xaml dla 2 zakładek.
+     * Pobierać style z konfiguracji.
+     * Podpiąć kod do pól (działanie aplikacji)
      */
-
 
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window
     {
+        private KeyValueConfigurationCollection settings;
         private TrenazerpilkarskiContext context;
         private DispatcherTimer timer = new DispatcherTimer();
+        public ObservableCollection<PlayerEffectiveness> EffectivenessList { get; set; }
 
         public MainWindow()
         {
             InitializeComponent();
-            this.context = new TrenazerpilkarskiContext("efefe");
-            InitializeTimer();
 
-            // Skuteczność
-            Effectiveness_ScoreDataGrid.ItemsSource = new List<EffectivenessData>();
-            Effectiveness_PlayerSelection.ItemsSource = context.Players.ToList();
-        }
+            settings = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None).AppSettings.Settings;
+            context = new TrenazerpilkarskiContext(settings["database_connection"].Value);
+            ApplyConfiguration();
 
-        /// <summary>
-        /// 
-        /// </summary>
-        private void InitializeTimer()
-        {
-            timer.Interval = TimeSpan.FromSeconds(1); // Ustawienie interwału na 1 sekundę
-            timer.Tick += Timer_Tick;
+            timer.Interval = TimeSpan.FromSeconds(1);
+            timer.Tick += OnTimerTick;
             timer.Start();
+
+            EffectivenessPlayerComboBox.ItemsSource = context.Players.ToList();
         }
 
         /// <summary>
-        /// Metoda wywoływana przez timer co 1 sekundę. Odświeża dane.
+        /// Odświeża dane z bazy danych i uzupełnia pola.
         /// </summary>
-        private void Timer_Tick(object? sender, EventArgs e)
+        private void RefreshData()
         {
-            this.context = new TrenazerpilkarskiContext("wfwef");
+            context = new TrenazerpilkarskiContext(settings["database_connection"].Value);
 
-            LoadGameData();
-            CalculateAveragePercentage();
-
-            showPlayerEffectiveness(); // Odświeża zakładkę "Skuteczność" (DZIAŁA)
+            RefreshLastGameSection();
+            RefreshPlayerEffectivitySection();
+            //
         }
 
-        private void LoadGameData()
+        private void RefreshLastGameSection()
         {
-            try
+            var latestGameRecord = context.GameRecords.Include("GameConfig").OrderByDescending(g => g.Id).FirstOrDefault();
+
+            if (latestGameRecord != null && latestGameRecord.GameConfig != null)
             {
-                // Pobierz najnowszy rekord gry
-                var latestGameRecord = context.GameRecords.Include("GameConfig").OrderByDescending(g => g.Id).FirstOrDefault();
+                // Ustaw nazwę gry jako tytuł okna
+                LastGameName.Content = latestGameRecord.GameConfig.Name;
 
-                if (latestGameRecord != null && latestGameRecord.GameConfig != null)
-                {
-                    // Ustaw nazwę gry jako tytuł okna
-                    lblGameTitle.Content = latestGameRecord.GameConfig.Name;
-
-                    // Pobierz graczy i ich wyniki związane z najnowszym rekordem gry
-                    var playerScores = context.Scores.Include("Player")
-                        .Where(s => s.GameRecordId == latestGameRecord.Id)
-                        .OrderByDescending(s => s.TotalScore)
-                        .ToList();
-
-                    // Wyświetl listę graczy i ich wyników w kontrolce ListBox
-                    lbPlayerScores.Items.Clear();
-                    for (int i = 0; i < playerScores.Count; i++)
-                    {
-                        var playerScore = playerScores[i];
-                        var player = playerScore.Player;
-
-                        if (playerScore.Player != null)
-                        {
-                            lbPlayerScores.Items.Add($"{i + 1}. {player.Name} {player.Surname} - {playerScore.TotalScore} pkt");
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Błąd: " + ex.Message);
-            }
-        }
-
-        private void CalculateAveragePercentage()
-        {
-            try
-            {
-                var playerScores = context.Scores.Include("Player").ToList();
-
-                var results = playerScores
-                    .GroupBy(s => s.Player.Name + " " + s.Player.Surname)
-                    .Select(group => new
-                    {
-                        PlayerName = group.Key,
-                        AveragePercentage = group.Average(s => s.TotalScorePercentage)
-                    })
+                // Pobierz graczy i ich wyniki związane z najnowszym rekordem gry
+                var playerScores = context.Scores.Include("Player")
+                    .Where(s => s.GameRecordId == latestGameRecord.Id)
+                    .OrderByDescending(s => s.TotalScore)
                     .ToList();
 
-                lbAveragePercentage.ItemsSource = results.Select(r => $"{r.PlayerName}: {r.AveragePercentage}%");
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Błąd: " + ex.Message);
+                // Wyświetl listę graczy i ich wyników w kontrolce ListBox
+                List<PlayerPlace> places = new List<PlayerPlace>();
+                LastGameScoreboard.ItemsSource = null;
+
+                for(int i = 0; i < playerScores.Count; i++)
+                {
+                    var score = playerScores[i];
+                    if (score.Player == null) continue;
+                    Player player = score.Player;
+
+                    places.Add(new PlayerPlace(i + 1, player.Name, player.Surname, null, (int)score.TotalScore, (int)score.TotalScorePercentage));
+                }
+
+                LastGameScoreboard.ItemsSource = places;
             }
         }
 
-
-
-
-        /*
-         * SKUTECZNOSC
-         */
-
-        /// <summary>
-        /// Zakładka "Skuteczność"
-        /// Wyświetla średnie wyniki procentowe gier podanego gracza.
-        /// </summary>
-        private void showPlayerEffectiveness()
+        private void RefreshPlayerEffectivitySection()
         {
-            if (Effectiveness_PlayerSelection.SelectedIndex < 0)
+            if(EffectivenessPlayerComboBox.SelectedItem == null)
             {
+                EffectivenessPlayerNameLabel.Content = "Wybierz zawodnika...";
+                EffectivenessPlayerComboBox.ItemsSource = context.Players.ToList();
+                EffectivenessScoreboard.ItemsSource = null;
                 return;
             }
 
-            Player player = (Player) Effectiveness_PlayerSelection.SelectedValue;
-
-            // Sprawdzenie czy wybrany gracz istnieje w bazie danych. Jeśli gracz nie istnieje, to lista rozwijana zostanie odświeżona. NIE TESTOWANO
-            if (!context.Players.Any(p => p.Id == player.Id))
-            {
-                Effectiveness_PlayerSelection.ItemsSource = context.Players.ToList();
-                Effectiveness_PlayerSelection.SelectedIndex = -1;
-                Effectiveness_ScoreDataGrid.ItemsSource = null;
-                Effectiveness_PlayerNameText.Content = "Wybierz zawodnika";
-                return;
-            }
-
-            // Wyświetlanie nazwy gracza i sortowanie danych.
-            Effectiveness_PlayerNameText.Content = player.ToString();
-            var effectivenessDataList = new List<EffectivenessData>();
+            Player player = (Player) EffectivenessPlayerComboBox.SelectedItem;
             var sortedScores = sortPlayerScoresByGameConfigs(player);
 
-            // Dodawanie do listy posortowanych danych.
+            EffectivenessPlayerNameLabel.Content = player.Name + " " + player.Surname;
+            List<PlayerEffectiveness> effectiveness = new List<PlayerEffectiveness>();
+            EffectivenessScoreboard.ItemsSource = null;
+
             foreach (var entry in sortedScores)
             {
-                effectivenessDataList.Add(new EffectivenessData(entry.Key.Name, entry.Value));
+                effectiveness.Add(new PlayerEffectiveness(entry.Key.Name, entry.Value));
             }
 
-            // Wyświetlanie przetworzonych danych w tabeli.
-            Effectiveness_ScoreDataGrid.ItemsSource = effectivenessDataList;
+            EffectivenessScoreboard.ItemsSource = effectiveness;
         }
 
         /// <summary>
@@ -190,7 +124,7 @@ namespace FBoxScores
         private Dictionary<GameConfig, List<GameRecordPlayer>> sortPlayerScoresByGameConfigs(Player player)
         {
             var sorted = new Dictionary<GameConfig, List<GameRecordPlayer>>();
-            var scores = player.Scores;
+            var scores = context.Players.Where(p => p.Id == player.Id).First().Scores;
 
             foreach (var score in scores)
             {
@@ -203,12 +137,12 @@ namespace FBoxScores
 
                 context.Entry(score.GameRecord).Reference(gr => gr.GameConfig).Load();
 
-                if(score.GameRecord.GameConfig == null)
+                if (score.GameRecord.GameConfig == null)
                 {
                     continue;
                 }
 
-                if(!sorted.ContainsKey(score.GameRecord.GameConfig))
+                if (!sorted.ContainsKey(score.GameRecord.GameConfig))
                 {
                     sorted.Add(score.GameRecord.GameConfig, new List<GameRecordPlayer>());
                 }
@@ -219,19 +153,69 @@ namespace FBoxScores
             return sorted;
         }
 
-        /*
-         * EVENTS
-         */
-
-        private void PlayerSelection_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void OnTimerTick(object? sender, EventArgs? e)
         {
-            showPlayerEffectiveness();
+            RefreshData();
         }
 
-        private void Window_Closed(object sender, EventArgs e)
+        private void MainMenuTogglerButton_Click(object sender, RoutedEventArgs e)
         {
-            timer.Stop();
-            context.Dispose();
+            if(MenuGrid.Visibility != Visibility.Visible)
+            {
+                LastGameGrid.Visibility = Visibility.Collapsed;
+                GameRecordGrid.Visibility = Visibility.Collapsed;
+                PlayerScoreGrid.Visibility = Visibility.Collapsed;
+                MenuGrid.Visibility = Visibility.Visible;
+            }
+        }
+
+        private void Button_Game1(object sender, RoutedEventArgs e)
+        {
+            MenuGrid.Visibility = Visibility.Collapsed;
+            LastGameGrid.Visibility = Visibility.Visible;
+        }
+
+        private void Button_Game2(object sender, RoutedEventArgs e)
+        {
+            MenuGrid.Visibility = Visibility.Collapsed;
+            GameRecordGrid.Visibility = Visibility.Visible;
+        }
+
+        private void Button_Game3(object sender, RoutedEventArgs e)
+        {
+            MenuGrid.Visibility = Visibility.Collapsed;
+            PlayerScoreGrid.Visibility = Visibility.Visible;
+        }
+
+        private void EffectivenessPlayerNameLabel_MouseDoubleClick(object sender, RoutedEventArgs e)
+        {
+            EffectivenessPlayerNameLabel.Visibility = Visibility.Collapsed;
+            EffectivenessPlayerComboBox.Visibility = Visibility.Visible;
+        }
+
+        private void EffectivenessPlayerComboBox_SelectionChanged(object sender, RoutedEventArgs e)
+        {
+            EffectivenessPlayerNameLabel.Visibility = Visibility.Visible;
+            EffectivenessPlayerComboBox.Visibility = Visibility.Collapsed;
+            RefreshPlayerEffectivitySection();
+        }
+
+        private void ApplyConfiguration()
+        {
+            LogoImage.Source = new BitmapImage(new Uri(settings["logo_image_source"].Value, UriKind.RelativeOrAbsolute));
+
+            try
+            {
+                FontFamily font = new FontFamily(settings["font_name"].Value);
+                FontFamily = font;
+            } catch(Exception ex)
+            {
+                // nie załadowano czcionki
+            }
+
+            SectionOneBorder.Height = int.Parse(settings["height"].Value);
+            SectionTwoBorder.Height = int.Parse(settings["height"].Value);
+            SectionThreeBorder.Height = int.Parse(settings["height"].Value);
         }
     }
 }
